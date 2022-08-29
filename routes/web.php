@@ -13,6 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/load-leads', [\App\Http\Controllers\MainController::class, 'loadLeadsAndEntitiesToDb']);
+Route::get('/show-leads', [\App\Http\Controllers\MainController::class, 'showLeads']);
