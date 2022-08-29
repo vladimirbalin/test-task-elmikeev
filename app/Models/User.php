@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'access_token',
+        'refresh_token',
+        'token_expires'
     ];
 
     /**
@@ -41,4 +45,35 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function hasAccessToken()
+    {
+        return isset($this->access_token);
+    }
+    public function hasNotAccessToken()
+    {
+        return !$this->hasAccessToken();
+    }
+    public function tokenHasExpired()
+    {
+        return now()->timestamp > $this->token_expires;
+    }
+    public function tokenHasNotExpired()
+    {
+        return ! $this->tokenHasExpired();
+    }
+
+    public function updateToken($token,
+                                $expires,
+                                $refresh_token,
+                                $token_type)
+    {
+        $this->update([
+            'access_token' => $token,
+            'token_expires' => $expires,
+            'refresh_token' => $refresh_token,
+            'token_type' => $token_type
+        ]);
+        return $this;
+    }
 }
